@@ -175,7 +175,21 @@ StoreAdmin.bineForms = function(){
 		pid = addProductForm.find("input[name='id']").val();
 		StoreAdmin.deleteProduct(clickedBtn, pid);
 	});
-};
+	
+	var changeStoreNameForm = $('form#change-store-name');
+	changeStoreNameForm.submit(function(e) {
+		e.preventDefault();
+		var submittedForm = $(this);
+		$.post('/store', submittedForm.serialize(), function(result) {
+			if (result["STATUS"] == "ERROR") {
+				alert(result["MSG"]);
+			} else {
+				submittedForm.attr('store_id', result['STORE_ID']);
+			}
+		}, 'json');
+		return false;
+	});
+}
 
 StoreAdmin.showAdminPage = function(pageToShow){
 	if (pageToShow == "goto"){

@@ -1,8 +1,23 @@
-var Store = {};
+var Store = {
+	storeId: 1
+};
 
 Store.start = function(){
 	$(document).ready(function() {
 		Store.loadCategories();
+		Store.renderStoreFront();
+	});
+};
+
+Store.renderStoreFront = function () {
+	var storeNameDiv = $('#store_name');
+	$.get("/store", function (result) {
+		if (result["STATUS"] == "ERROR") {
+			alert(result["MSG"]);
+		} else {
+			storeNameDiv.html(result['STORE_NAME']);
+			storeNameDiv.attr('store_id', result['STORE_ID']);
+		}
 	});
 };
 
