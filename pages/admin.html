@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Store Admin</title>
     	<link rel="stylesheet" href="./css/common.css">
         <link rel="stylesheet" href="./css/admin.css">
@@ -25,9 +25,12 @@
     </section>
     <section id="store-page" class="admin-page">
         <h2> Store Front </h2>
-        <form id="change-store-name">
-            <input type="text" name="name" />
-            <input type="submit" value="Change Name" />
+        <form id="store-variables">
+            <label for="name">Change Store Name</label>
+            <input type="text" name="name" /><br>
+            <label for="email">Change Costumer Support Email</label>
+            <input type="email" name="email" /><br>
+            <input type="submit" value="submit" />
         </form>
     </section>
     <section id="categories-page" class="admin-page">

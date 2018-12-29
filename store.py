@@ -8,47 +8,80 @@ import requests
 connection = pymysql.connect(host='127.0.0.1', unix_socket='/tmp/mysql.sock', user='root', passwd='hmtbuktxehutk1!',
                              db='store', charset='utf8', cursorclass=pymysql.cursors.DictCursor)
 
+def escape_single_quote(text):
+    if not text:
+        return text
+    result = """"""
+    for char in text:
+        if char == """'""":
+            result += """\\"""
+            result += char
+        else:
+            result += char
+    return result
+
 
 @post('/store')
+def change_store_front():
+    result = {
+        'STATUS': None,
+        'MSG': None,
+        'STORE_NAME': None,
+        'STORE_ID': None,
+        'OWNER_EMAIL': None
+    }
+    try:
+        store_name_param = escape_single_quote(request.params.get('name'))
+        store_email_param = escape_single_quote(request.params.get('email'))
+        if not store_email_param or not store_name_param:
+            result['STATUS'] = 'ERROR'
+            result['MSG'] = 'Missing parameters'
+            return HTTPResponse(status=400, body=result)
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM store_front"
+            cursor.execute(sql)
+            r = cursor.fetchone()
+            sql = "UPDATE store_front SET store_name='{}', owner_email='{}' WHERE store_name='{}'".format(
+                store_name_param, store_email_param, escape_single_quote(r['store_name']))
+            cursor.execute(sql)
+            connection.commit()
+            result['STORE_ID'] = cursor.lastrowid
+            result['STORE_NAME'] = store_name_param
+            result['OWNER_EMAIL'] = store_email_param
+            result['STATUS'] = 'SUCCESS'
+            return HTTPResponse(status=200, body=result)
+    except Exception as e:
+        print(e)
+        result['STATUS'] = 'ERROR'
+        result['MSG'] = 'internal error'
+        return HTTPResponse(status=500, body=result)
+
 @get('/store')
 def get_store_front():
     result = {
         'STATUS': None,
         'MSG': None,
         'STORE_NAME': None,
-        'STORE_ID': None
+        'STORE_ID': None,
+        'OWNER_EMAIL': None
     }
     try:
-        store_name_param = request.params.get('name')
         with connection.cursor() as cursor:
             sql = "SELECT * FROM store_front"
             cursor.execute(sql)
             r = cursor.fetchone()
-            if r and not store_name_param:
+            if r:
                 result['STORE_NAME'] = r['store_name']
                 result['STORE_ID'] = r['store_id']
-            elif r and store_name_param:
-                sql = "UPDATE store_front SET store_name='{}' WHERE store_name='{}'".format(store_name_param, r['store_name'])
-                cursor.execute(sql)
-                connection.commit()
-                result['STORE_ID'] = cursor.lastrowid
-                result['STORE_NAME'] = store_name_param
-            elif not r and store_name_param:
-                sql = "INSERT INTO store_front (store_name) VALUES('{}')".format(store_name_param)
-                cursor.execute(sql)
-                connection.commit()
-                result['STORE_ID'] = cursor.lastrowid
-                result['STORE_NAME'] = store_name_param
+                result['OWNER_EMAIL'] = r['owner_email']
             else:
-                sql = "INSERT INTO store_front (store_name) VALUES('{}')".format(
-                    'My Store')
-                cursor.execute(sql)
-                connection.commit()
-                result['STORE_ID'] = cursor.lastrowid
-                result['STORE_NAME'] = 'My Store'
+                result['STORE_NAME'] = "Tal's Store"
+                result['STORE_ID'] = 1
+                result['OWNER_EMAIL'] = 'tal@gmail.com'
             result['STATUS'] = 'SUCCESS'
             return HTTPResponse(status=200, body=result)
-    except:
+    except Exception as e:
+        print(e)
         result['STATUS'] = 'ERROR'
         result['MSG'] = 'internal error'
         return HTTPResponse(status=500, body=result)

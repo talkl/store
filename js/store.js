@@ -17,6 +17,7 @@ Store.renderStoreFront = function () {
 		} else {
 			storeNameDiv.html(result['STORE_NAME']);
 			storeNameDiv.attr('store_id', result['STORE_ID']);
+			$('input[name="business"]').val(result['OWNER_EMAIL']);
 		}
 	});
 };

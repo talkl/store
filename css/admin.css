@@ -115,7 +115,7 @@ input[type="submit"]{
     display:none;
 }
 
-input[type="text"]{
+input[type="text"], input[type="email"]{
     font-size: 25px;
     vertical-align: middle;
     border: solid 1px #999;

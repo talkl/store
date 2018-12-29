@@ -176,7 +176,7 @@ StoreAdmin.bineForms = function(){
 		StoreAdmin.deleteProduct(clickedBtn, pid);
 	});
 	
-	var changeStoreNameForm = $('form#change-store-name');
+	var changeStoreNameForm = $('form#store-variables');
 	changeStoreNameForm.submit(function(e) {
 		e.preventDefault();
 		var submittedForm = $(this);
@@ -184,7 +184,7 @@ StoreAdmin.bineForms = function(){
 			if (result["STATUS"] == "ERROR") {
 				alert(result["MSG"]);
 			} else {
-				submittedForm.attr('store_id', result['STORE_ID']);
+				alert('changed successfully');
 			}
 		}, 'json');
 		return false;
